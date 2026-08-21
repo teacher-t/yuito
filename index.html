@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SY男さん 修学旅行 対応フローチャート＆ガイド</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Chosen Palette: Slate & Blue with Functional Status Colors (Green, Yellow, Orange, Red) -->
+    <!-- Application Structure Plan: Designed a task-oriented single-page dashboard. Section 1 serves as a quick assessment level-selector for immediate protocols. Section 2 holds scenario flowcharts with dynamic tab switching between Pattern A and Pattern B. Section 3 uses Chart.js to visually rationalize the 15:00 critical early decision boundary based on fatigue/risk accumulation. Section 4 offers an interactive checklist for pre-trip agreements. -->
+    <!-- Visualization & Content Choices: Report Content -> Goal -> Presentation Method -> Interaction -> Justification. 1. Level Assessment -> Quick Protocol Lookup -> Interactive Cards -> Click level -> Dynamically updates response details -> Instant clarity during crisis. 2. Scenario Flowcharts -> Step-by-Step Guidance -> Tabbed Step Layout -> Switch pattern views -> Reduces cognitive load -> Pure HTML/JS logic. 3. 15:00 Rule Justification -> Convince/Inform -> Interactive Line Chart -> Hover tooltips -> Proves exponential risk buildup -> Chart.js. Confirming NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <header class="bg-blue-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 md:py-5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold tracking-tight">SY男さん 修学旅行 対応フローチャート</h1>
+                <p class="text-blue-200 mt-1 text-sm md:text-base">関係職員・保護者（祖母）事前協議＆現場対応用インタラクティブダッシュボード</p>
+            </div>
+            <div class="bg-blue-800 px-4 py-2 rounded-lg border border-blue-700 shadow-inner text-sm text-center">
+                <p><strong>🗓️ 実施日程:</strong> 2026年10月7日（水）〜8日（木）</p>
+                <p><strong>📍 行先:</strong> 栃木県なかがわ水遊園・那須方面</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 py-8 w-full flex flex-col gap-10">
+
+        <!-- 概要 -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2 mb-3">📌 本フローチャートの目的</h2>
+            <p class="text-slate-600 leading-relaxed text-sm md:text-base">
+                SY男さんの修学旅行における不穏状態への統一的な判断基準と対応手順を可視化したものです。全教職員の対応の共通理解を図り、過度な負担や夜間事故のリスクを未然に防ぎながら、児童の安心・安全な参加を支援します。
+            </p>
+        </section>
+
+        <!-- 1. 不穏レベル別 判断基準 -->
+        <section id="assessment" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-blue-500 pb-2 mb-4">1. 共通判断基準（不穏レベルと対応）</h2>
+            <p class="text-slate-600 mb-6 leading-relaxed text-sm md:text-base">
+                現在の不穏レベルをタップ（選択）してください。状態に応じた「基本対応」と「判断トリガー（時間基準）」が即座に表示されます。
+            </p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
+                <button onclick="updateAssessment(1)" class="assessment-btn p-4 rounded-lg border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-all flex flex-col items-center justify-center gap-2" data-level="1">
+                    <span class="text-3xl">🟢</span>
+                    <span class="font-bold text-green-800">Lv.1 通常</span>
+                </button>
+                <button onclick="updateAssessment(2)" class="assessment-btn p-4 rounded-lg border-2 border-yellow-200 bg-yellow-50 hover:bg-yellow-100 transition-all flex flex-col items-center justify-center gap-2" data-level="2">
+                    <span class="text-3xl">🟡</span>
+                    <span class="font-bold text-yellow-800">Lv.2 軽度不穏</span>
+                </button>
+                <button onclick="updateAssessment(3)" class="assessment-btn p-4 rounded-lg border-2 border-orange-200 bg-orange-50 hover:bg-orange-100 transition-all flex flex-col items-center justify-center gap-2" data-level="3">
+                    <span class="text-3xl">🟠</span>
+                    <span class="font-bold text-orange-800">Lv.3 中度不穏</span>
+                </button>
+                <button onclick="updateAssessment(4)" class="assessment-btn p-4 rounded-lg border-2 border-red-200 bg-red-50 hover:bg-red-100 transition-all flex flex-col items-center justify-center gap-2" data-level="4">
+                    <span class="text-3xl">🔴</span>
+                    <span class="font-bold text-red-800">Lv.4 重度危険</span>
+                </button>
+            </div>
+
+            <div id="assessment-result" class="bg-slate-50 p-6 rounded-lg border border-slate-200 min-h-[160px] flex items-center justify-center text-slate-500">
+                上のレベルボタンを選択すると、現場での対応手順が表示されます。
+            </div>
+        </section>
+
+        <!-- 2. 対応フローチャート -->
+        <section id="flowcharts" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-blue-500 pb-2 mb-4">2. シナリオ別 対応フローチャート</h2>
+            <p class="text-slate-600 mb-6 leading-relaxed text-sm md:text-base">
+                おばあちゃん（祖母）の同行有無に応じた2つのシナリオです。タブを切り替えて時間軸に沿った具体的な動きを確認してください。
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-2 mb-6 border-b border-slate-200 pb-4">
+                <button onclick="switchTab('patternA')" id="btn-patternA" class="px-6 py-3 font-bold rounded-t-lg bg-blue-600 text-white transition-colors">
+                    【パターンA】 おばあちゃん 不参加
+                </button>
+                <button onclick="switchTab('patternB')" id="btn-patternB" class="px-6 py-3 font-bold rounded-t-lg bg-slate-200 text-slate-600 hover:bg-slate-300 transition-colors">
+                    【パターンB】 おばあちゃん 付き添い (ホテル別室同泊)
+                </button>
+            </div>
+
+            <!-- パターンA -->
+            <div id="content-patternA" class="fade-in">
+                <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded text-blue-900 text-sm md:text-base">
+                    <strong>📋 基本方針：</strong> 夜間の不眠・パニックリスク、および片道2時間の深夜送迎事故を回避するため、<strong>1日目 15:00</strong>を最大の見極めラインとし、早期お迎え手配を最優先とします。
+                </div>
+
+                <div class="relative border-l-2 border-slate-200 ml-4 pl-6 space-y-8 pb-4">
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1 bg-white border-2 border-slate-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">1</div>
+                        <h3 class="font-bold text-lg text-slate-800">1日目：移動・見学（なかがわ水遊園・お菓子の城）</h3>
+                        <div class="mt-3 grid gap-3">
+                            <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                                <span class="font-bold text-green-700">🟢 Lv.1〜2（通常・軽度）</span>
+                                <p class="text-sm mt-1">予定通り参加、または教員と徒歩で個別散策（タイマー15分以内で復帰）。</p>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded border border-orange-200">
+                                <span class="font-bold text-orange-800">⚠️ Lv.3〜4 発生（激昂・強い拒否・乗車拒否）</span>
+                                <p class="text-sm mt-1 mb-2">安全な場所でクールダウン。タイマーで時間を意識させる（教員2名体制）。</p>
+                                <ul class="list-disc pl-5 text-sm space-y-1">
+                                    <li><strong>30分以内に落ち着く：</strong> バスの末尾等で行程復帰</li>
+                                    <li class="text-red-700 font-bold">30分以上継続（乗車不可）： 【タクシー移動 ＆ ホテル先回り】</li>
+                                </ul>
+                                <div class="mt-3 text-xs bg-white p-3 rounded border border-orange-200 flex items-center gap-2">
+                                    <span class="text-xl">🚕</span>
+                                    <span>バス集団を先行させ、教員とタクシーで「ホテル・フロラシオン那須」へ先回り・静養。</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1 bg-red-500 border-2 border-red-200 rounded-full w-6 h-6 flex items-center justify-center text-xs text-white font-bold shadow-sm">!</div>
+                        <h3 class="font-bold text-xl text-red-700">★最大の分岐点：1日目 15:00時点（ホテル到着時）</h3>
+                        <p class="text-sm text-slate-600 mt-1 mb-3">タクシーでホテル静養後も、Lv.3〜4（他害・激しいパニック）が継続しているか？</p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white border-2 border-green-200 p-4 rounded-lg shadow-sm">
+                                <div class="font-bold text-green-700 text-lg mb-1">【NO】落ち着いた</div>
+                                <p class="text-sm text-slate-600">夕食・入浴を別室・個別対応で進め、宿泊を継続する。</p>
+                            </div>
+                            <div class="bg-red-50 border-2 border-red-300 p-4 rounded-lg shadow-sm">
+                                <div class="font-bold text-red-700 text-lg mb-1">【YES】継続中</div>
+                                <div class="font-bold bg-red-600 text-white px-3 py-1 rounded inline-block mb-2 text-sm">早期お迎え要請（15:00〜16:00）</div>
+                                <p class="text-xs text-red-900 leading-relaxed">明るい時間帯におばあちゃんへ電話連絡し、2時間かけてお迎えに来ていただき引き渡し。夜間リスクを完全回避。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1 bg-white border-2 border-slate-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">3</div>
+                        <h3 class="font-bold text-lg text-slate-800">1日目夜間 〜 2日目（那須どうぶつ王国）</h3>
+                        <ul class="mt-3 space-y-3">
+                            <li class="bg-slate-50 p-3 rounded border border-slate-200 text-sm flex flex-col md:flex-row md:items-center gap-2">
+                                <span class="font-bold text-slate-700 whitespace-nowrap min-w-[120px]">🌙 夜間パニック</span>
+                                <span>不眠・他害等が発生した場合、別室で教員2名で安全確保 ➔ <strong class="text-red-600">【2日目朝7:00にお迎え要請・朝引き渡し】</strong></span>
+                            </li>
+                            <li class="bg-slate-50 p-3 rounded border border-slate-200 text-sm flex flex-col md:flex-row md:items-center gap-2">
+                                <span class="font-bold text-slate-700 whitespace-nowrap min-w-[120px]">☀️ 2日目昼間</span>
+                                <span>Lv.3〜4が30分以上継続した場合、復路バスに乗せず現地でおばあちゃんと合流・引き渡し。</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- パターンB -->
+            <div id="content-patternB" class="hidden fade-in">
+                <div class="mb-6 p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded text-indigo-900 text-sm md:text-base">
+                    <strong>📋 基本方針：</strong> 日中は「教員との自立対応」を基本とし、原則おばあちゃんは顔を合わせません。制限時間（30分）を超えた場合や夜間対応時のみ介入を依頼します。
+                </div>
+
+                <div class="relative border-l-2 border-slate-200 ml-4 pl-6 space-y-8 pb-4">
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1 bg-white border-2 border-slate-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">1</div>
+                        <h3 class="font-bold text-lg text-slate-800">日中行程（1日目・2日目 共通）</h3>
+                        <p class="text-xs text-indigo-700 font-bold mt-1">※おばあちゃんはホテル・フロラシオン那須（別室）または近隣で待機。</p>
+                        
+                        <div class="mt-3 grid gap-3">
+                            <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                                <span class="font-bold text-green-700">🟢 Lv.1〜2（通常・軽度）</span>
+                                <p class="text-sm mt-1">教員のみで対応。おばあちゃんには連絡せず、顔も合わせない（自立支援）。</p>
+                            </div>
+                            <div class="bg-indigo-50 p-4 rounded border border-indigo-200">
+                                <span class="font-bold text-indigo-800">⚠️ Lv.3 発生（激昂・立ちすくみ・乗車拒否）</span>
+                                <p class="text-sm mt-1 mb-2">教員対応（<strong>30分制限</strong>）：タイマー・条件提示（わくわくふぁいる等）で切り替えを図る。</p>
+                                
+                                <div class="bg-white p-3 rounded shadow-sm border border-indigo-100 mt-2">
+                                    <div class="text-xs font-bold text-indigo-900 border-b pb-1 mb-2">【30分以上継続】または【Lv.4 発生時】</div>
+                                    <div class="flex items-center gap-2 font-bold text-indigo-700 mb-2 text-sm">
+                                        <span class="text-lg">🚕</span> 【タクシー移動 ＆ おばあちゃん合流】
+                                    </div>
+                                    <p class="text-xs text-slate-600 mb-2">タクシーでホテルへ先回りしておばあちゃんと合流し、見通しと条件を伝えてもらう。</p>
+                                    <ul class="text-xs space-y-1 pl-4 border-l-2 border-indigo-200">
+                                        <li>・<strong class="text-green-600">落ち着いた：</strong> ホテル等で静養後、可能な範囲で復帰</li>
+                                        <li>・<strong class="text-red-600">収まらない：</strong> <strong>【現地にて自家用車へ引き渡し（帰宅）】</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute -left-9 top-1 bg-white border-2 border-slate-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">2</div>
+                        <h3 class="font-bold text-lg text-slate-800">宿泊先・夜間（ホテル・フロラシオン那須）</h3>
+                        <ul class="mt-3 space-y-3">
+                            <li class="bg-slate-50 p-3 rounded border border-slate-200 text-sm flex flex-col md:flex-row md:items-center gap-2">
+                                <span class="font-bold text-slate-700 whitespace-nowrap min-w-[120px]">🏨 通常時</span>
+                                <span>おばあちゃんは別室宿泊。就寝時等に不穏があればおばあちゃんが部屋へ行き対応。</span>
+                            </li>
+                            <li class="bg-red-50 p-3 rounded border border-red-200 text-sm flex flex-col md:flex-row md:items-center gap-2">
+                                <span class="font-bold text-red-700 whitespace-nowrap min-w-[120px]">🌙 夜間パニック</span>
+                                <span>教員とともにおばあちゃんが対応。どうしても収束しない場合は<strong class="text-red-700">翌朝一番でそのまま自家用車で帰宅</strong>。</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 根拠分析チャート -->
+        <section id="justification-chart" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-blue-500 pb-2 mb-4">3. 【分析】15:00 早期判断ラインの合理的根拠</h2>
+            <p class="text-slate-600 mb-6 leading-relaxed text-sm md:text-base">
+                1日目15:00（ホテル到着時）を最大判断ラインに設定した根拠です。疲労蓄積と夕方〜夜間の環境変化が重なるとパニックリスクが急速に高まります。明るい15:00時点での決断が、児童・保護者双方のリスクを最小化します。
+            </p>
+            
+            <div class="chart-container">
+                <canvas id="riskTimelineChart"></canvas>
+            </div>
+        </section>
+
+        <!-- 4. 事前協議チェックリスト -->
+        <section id="checklist" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-blue-500 pb-2 mb-4">4. 事前協議・確認チェックリスト</h2>
+            <p class="text-slate-600 mb-6 leading-relaxed text-sm md:text-base">
+                関係職員およびおばあちゃんとの事前合意事項です。項目をクリックして確認状況（チェックマーク）を記録できます。
+            </p>
+
+            <div class="space-y-4">
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleCheck(this)">
+                    <div class="flex items-start gap-3">
+                        <div class="check-icon w-6 h-6 flex-shrink-0 rounded border-2 border-blue-400 flex items-center justify-center text-white bg-white mt-0.5 font-bold text-sm"></div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 check-text">1. おばあちゃんへの説明・事前合意</h3>
+                            <p class="text-sm text-slate-600 mt-1">「1日目15:00時点で不穏（Lv.3〜4）が30分以上続いている場合、夜間リスク回避のため早期お迎え（15〜16時）を依頼する」ルールの受容・合意。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleCheck(this)">
+                    <div class="flex items-start gap-3">
+                        <div class="check-icon w-6 h-6 flex-shrink-0 rounded border-2 border-blue-400 flex items-center justify-center text-white bg-white mt-0.5 font-bold text-sm"></div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 check-text">2. タクシー費用・手配のルール化</h3>
+                            <p class="text-sm text-slate-600 mt-1">バス離脱時のタクシー代（学校費/立替/保護者負担等）の区分確認。那須周辺のタクシー会社連絡先リストの作成・共有。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleCheck(this)">
+                    <div class="flex items-start gap-3">
+                        <div class="check-icon w-6 h-6 flex-shrink-0 rounded border-2 border-blue-400 flex items-center justify-center text-white bg-white mt-0.5 font-bold text-sm"></div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 check-text">3. おばあちゃんの宿泊場所確定</h3>
+                            <p class="text-sm text-slate-600 mt-1">付き添い（パターンB）の場合、「ホテル・フロラシオン那須」の別室手配、または近隣ホテルの決定。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 text-center py-6 mt-8">
+        <p class="text-sm">SY男さん 修学旅行 対応インタラクティブダッシュボード &copy; 2026</p>
+    </footer>
+
+    <script>
+        const assessmentData = {
+            1: {
+                title: "🟢 Lv.1 通常",
+                state: "行程通り参加できている、集団の近くにいる",
+                action: "通常対応（わくわくふぁいるで見通し確認）",
+                trigger: "制限なし",
+                bgColor: "bg-green-50",
+                borderColor: "border-green-300"
+            },
+            2: {
+                title: "🟡 Lv.2 軽度不穏",
+                state: "集団からの離脱、愚痴、「帰りたい」の訴え、眠気による不機嫌",
+                action: "別室・クールダウン（タイマー5/10/15分選択）、条件提示",
+                trigger: "タイマー設定時間内での切り替えを図る",
+                bgColor: "bg-yellow-50",
+                borderColor: "border-yellow-300"
+            },
+            3: {
+                title: "🟠 Lv.3 中度不穏",
+                state: "激昂、強い指示拒否、バス乗車拒否、集団妨害、自傷・鼻血",
+                action: "物理的距離の確保（男性2名体制）、活動離脱・別行動へ移行",
+                trigger: "<strong class='text-orange-700'>【15〜30分継続】</strong>でタクシー移動等へ切り替え",
+                bgColor: "bg-orange-50",
+                borderColor: "border-orange-300"
+            },
+            4: {
+                title: "🔴 Lv.4 重度危険",
+                state: "対教師・他児への継続的な他害（叩く・引っ掻く）、パニックによる飛び出し",
+                action: "安全確保・クールダウン後、保護者へ引き渡し手配",
+                trigger: "<strong class='text-red-700'>【即時判断】</strong>早期お迎え・早退要請",
+                bgColor: "bg-red-50",
+                borderColor: "border-red-300"
+            }
+        };
+
+        function updateAssessment(level) {
+            const data = assessmentData[level];
+            const resultDiv = document.getElementById('assessment-result');
+            
+            document.querySelectorAll('.assessment-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-blue-400', 'ring-offset-2');
+            });
+            document.querySelector(`.assessment-btn[data-level="${level}"]`).classList.add('ring-4', 'ring-blue-400', 'ring-offset-2');
+
+            resultDiv.className = `p-6 rounded-lg border-2 ${data.bgColor} ${data.borderColor} fade-in min-h-[160px]`;
+            resultDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4">${data.title}</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white p-3 rounded shadow-sm border border-slate-200">
+                        <div class="text-xs text-slate-500 mb-1 font-bold">児童の状態</div>
+                        <div class="text-sm font-medium text-slate-800">${data.state}</div>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow-sm border border-slate-200">
+                        <div class="text-xs text-slate-500 mb-1 font-bold">基本対応</div>
+                        <div class="text-sm font-medium text-slate-800">${data.action}</div>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow-sm border border-slate-200">
+                        <div class="text-xs text-slate-500 mb-1 font-bold">時間基準・決定トリガー</div>
+                        <div class="text-sm font-medium text-slate-800">${data.trigger}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchTab(tabId) {
+            document.getElementById('content-patternA').classList.add('hidden');
+            document.getElementById('content-patternB').classList.add('hidden');
+            
+            const btnA = document.getElementById('btn-patternA');
+            const btnB = document.getElementById('btn-patternB');
+            
+            btnA.className = "px-6 py-3 font-bold rounded-t-lg transition-colors " + (tabId === 'patternA' ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-600 hover:bg-slate-300");
+            btnB.className = "px-6 py-3 font-bold rounded-t-lg transition-colors " + (tabId === 'patternB' ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-600 hover:bg-slate-300");
+            
+            const activeContent = document.getElementById('content-' + tabId);
+            activeContent.classList.remove('hidden');
+            activeContent.classList.remove('fade-in');
+            void activeContent.offsetWidth; 
+            activeContent.classList.add('fade-in');
+        }
+
+        function toggleCheck(element) {
+            const icon = element.querySelector('.check-icon');
+            const text = element.querySelector('.check-text');
+            
+            if (icon.classList.contains('bg-blue-500')) {
+                icon.classList.remove('bg-blue-500');
+                icon.classList.add('bg-white');
+                icon.innerHTML = '';
+                text.classList.remove('line-through', 'text-slate-400');
+                text.classList.add('text-slate-800');
+            } else {
+                icon.classList.remove('bg-white');
+                icon.classList.add('bg-blue-500');
+                icon.innerHTML = '✓';
+                text.classList.add('line-through', 'text-slate-400');
+                text.classList.remove('text-slate-800');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAssessment(1);
+
+            const ctx = document.getElementById('riskTimelineChart').getContext('2d');
+            const labels = ['8:30 (学校発)', '10:00 (水遊園)', '12:00 (昼食)', '14:00 (お菓子の城)', '15:00 (ホテル着)', '18:00 (夕食)', '21:00 (夜間パニック)'];
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '対応遅延時のパニックリスク推移モデル',
+                            data: [10, 20, 25, 40, 70, 85, 100],
+                            borderColor: '#ef4444', 
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#ef4444'
+                        },
+                        {
+                            label: '15:00 早期お迎え完了時（リスククリア）',
+                            data: [10, 20, 25, 40, 0, null, null],
+                            borderColor: '#22c55e', 
+                            borderWidth: 4,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#22c55e',
+                            pointStyle: 'rectRot'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { family: 'sans-serif' } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) label += context.parsed.y + '% (想定リスク)';
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'パニック・他害 発生リスク想定 (%)', font: { weight: 'bold' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            title: { display: true, text: '1日目 行程タイムライン', font: { weight: 'bold' } }
+                        }
+                    },
+                    interaction: { mode: 'index', intersect: false }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
